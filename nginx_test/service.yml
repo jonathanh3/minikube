@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+  namespace: web-app
+spec:
+  selector:
+    app: web-app
+  ports:
+    - protocol: TCP
+      port: 80  # Port to access the service
+      targetPort: 80  # Port exposed by the container
+      # nodePort: 30000  # External node port (optional, or leave for auto-assignment)
+  # type: NodePort
