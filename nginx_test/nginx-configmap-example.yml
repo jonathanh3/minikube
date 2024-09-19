@@ -1,4 +1,9 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-app
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: web-app-config
@@ -56,3 +61,47 @@ data:
       #    deny  all;
       #}
       }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-deployment
+  namespace: web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+        - name: web-app-container
+          image: nginx:1.27.0-alpine
+          volumeMounts:
+            - name: web-app-config-vol
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+            - name: web-app-config-vol
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: web-app-config-vol
+          configMap:
+            name: web-app-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+  namespace: web-app
+spec:
+  selector:
+    app: web-app
+  ports:
+    - protocol: TCP
+      port: 80  # Port to access the service
+      targetPort: 1337  # Port exposed by the container
+  type: ClusterIP
