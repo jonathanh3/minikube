@@ -16,14 +16,7 @@ spec:
     spec:
       containers:
         - name: web-app-container
-          image: nginx:1.27.0-alpine
+          image: nginx:1.26.0-alpine
           ports:
             - name: web
               containerPort: 80
-          volumeMounts:
-            - name: nginx-html
-              mountPath: /usr/share/nginx/html # Path inside the container
-      volumes:
-        - name: nginx-html
-          configMap:
-            name: nginx-html-config # ConfigMap name
